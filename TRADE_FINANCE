@@ -1,0 +1,211 @@
+import math
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy import integrate
+import yfinance as yf
+from flask import Flask, request, jsonify
+
+# Matrix calculations
+nc1 = np.matrix([[5,5,1], [5,8,7], [4,4,2]])
+nc2 = np.matrix([[8,8,8], [7,3,4], [4,2,7]])
+nc3 = np.matrix([[9,9,3], [6,9,6], [5,9,3]])
+
+rate1low = nc1 * 0.05
+rate2low = nc2 * 0.05
+rate3low = nc3 * 0.05
+
+lowrate = [rate1low, rate2low, rate3low]
+for x in lowrate:
+    print(f'These are the lowest Matrix Hash Rates in Drachma: {x}')
+
+gc1 = np.matrix([[9,24,20], [16,12,12], [19,12,28], [8,25,29]])
+gc2 = np.matrix([[24,24,12], [23,7,2], [3,9,2], [2,3,7]])
+gc3 = np.matrix([[2,3,5], [4,10,2], [6,2,7], [4,9,6]])
+
+medium1 = gc1 * 0.05
+medium2 = gc2 * 0.05
+medium3 = gc3 * 0.05
+
+mediumrate = [medium1, medium2, medium3]
+for x in mediumrate:
+    print(f'These are the medium Matrix Hash Rates in Drachma: {x}')
+
+bc1 = np.matrix([[8,9,2], [5,5,6], [7,8,5], [4,5,3]])
+bc2 = np.matrix([[7,9,6], [4,6,2], [7,8,6], [2,6,9]])
+bc3 = np.matrix ([[5,9,8], [7,6,4], [9,1,3], [7,2,7]])
+
+highest1 = bc1 * 0.05
+highest2 = bc2 * 0.05
+highest3 = bc3 * 0.05
+
+highestrates = [highest1, highest2, highest3]
+for x in highestrates:
+    print(f'These are the highest Matrix Hash Rates in Drachma: {x}')
+
+MasterKey = np.matrix([[7,5,6], [4,3,7], [5,2,6], [9,2,10], [7,4,8], [6,4,3]])
+for x in MasterKey:
+    print(MasterKey)
+
+class LeveragedBuyout:
+    def __init__(self, values):
+        self.values = values
+        self.shareholders = {
+            "John Doe": "CEO",
+            "Alice Smith": "CFO",
+            "Bob Johnson": "CTO",
+            "Emma Brown": "COO",
+            # Add more shareholders and positions as needed
+        }
+        self.market_creditors = {
+            "Creditor_A": 1000000,
+            "Creditor_B": 500000,
+            "Creditor_C": 800000,
+            # Add more creditors and principal values as needed
+        }
+
+    def identify_highest_lowest(self):
+        highest_value = max(self.values)
+        lowest_value = min(self.values)
+        return highest_value, lowest_value
+
+    def remove_lowest_value_points(self):
+        _, lowest_value = self.identify_highest_lowest()
+        self.values = [value for value in self.values if value != lowest_value]
+        print(f"Removed all occurrences of the lowest value ({lowest_value}) from the LBO.")
+
+    def adjust_asset_classes(self):
+        asset_classes = {
+            "Real Estate": 1000000,
+            "Equities": 500000,
+            "Bonds": 300000,
+            # Add more asset classes and their sizes as needed
+        }
+
+        adjusted_balance_sheet = {asset_class: 0 for asset_class in asset_classes}
+
+        for value in self.values:
+            for asset_class, size in asset_classes.items():
+                if value >= size:
+                    adjusted_balance_sheet[asset_class] += value
+                    break  # Adjust value to the first matching asset class
+
+        return adjusted_balance_sheet
+
+    def management_buyout(self):
+        strong_management = {
+            shareholder: position for shareholder, position in self.shareholders.items()
+            if len(shareholder.split()) == 2  # Filtering based on a simple criterion (can be modified)
+        }
+        weak_management = set(self.shareholders.keys()) - set(strong_management.keys())
+
+        for weak_member in weak_management:
+            del self.shareholders[weak_member]
+
+        print("Strong Management Members after Buyout:")
+        for shareholder, position in strong_management.items():
+            print(f"{shareholder} - {position}")
+
+    def discounted_cash_flow(self, discount_rate=0.1):
+        total_cash_flow = sum(self.values)
+        dcf = total_cash_flow / ((1 + discount_rate) ** len(self.values))
+        print(f"Discounted Cash Flow (DCF): {dcf}")
+
+    def killzone(self):
+        volatility = 0.03  # 3.0% volatility
+        while volatility <= 0.125:  # 12.5% volatility
+            if volatility == 0.125:
+                print("Resistance for volatility reached at 12.5% - Killzone active!")
+            else:
+                print(f"Resistance for volatility at {volatility * 100:.1f}%")
+            volatility += 0.005  # Increment by 0.5% for each iteration
+
+    def slippage_acquisition(self):
+        acquisition_cost = sum(self.values)
+        slippage_percentage = 0.05  # Simulating 5% slippage
+
+        adjusted_acquisition_cost = acquisition_cost * (1 + slippage_percentage)
+        print(f"Adjusted Acquisition Cost considering 5% slippage: {adjusted_acquisition_cost}")
+
+    def creditors(self):
+        total_principal_value = sum(self.market_creditors.values())
+        company_leverage = 70 * total_principal_value
+        print(f"Company's market creditors' total principal value: {total_principal_value}")
+        print(f"Company leverage at 70x of principal value: {company_leverage}")
+
+# Example usage:
+values = [800000, 1500000, 400000, 250000, 600000]
+lbo = LeveragedBuyout(values)
+
+adjusted_sheet = lbo.adjust_asset_classes()
+print("Adjusted Balance Sheet:")
+for asset_class, size in adjusted_sheet.items():
+    print(f"{asset_class}: {size}")
+
+lbo.management_buyout()
+lbo.discounted_cash_flow()
+print("Checking Volatility Resistance:")
+lbo.killzone()
+print("Simulating Slippage in Acquisition:")
+lbo.slippage_acquisition()
+print("Market Creditors and Leverage:")
+lbo.creditors()
+
+# Logistic map and financial sequences
+def logistic_map(r, x0, num_steps):
+    x_values = [x0]
+    for _ in range(num_steps - 1):
+        x_n = x_values[-1]
+        x_next = r * x_n * (1 - x_n)
+        x_values.append(x_next)
+    return x_values
+
+def financial_sequences(r_values, x0_sequence, num_steps):
+    financial_data = []
+
+    for x0 in x0_sequence:
+        x_values = logistic_map(r_values, x0, num_steps)
+        financial_data.append(x_values)
+
+    return np.array(financial_data)
+
+def plot_financial_sequences(r_values, x0_sequence, num_steps):
+    financial_data = financial_sequences(r_values, x0_sequence, num_steps)
+    for r_idx, r in enumerate(r_values):
+        plt.plot(range(num_steps), financial_data[r_idx], label=f"r={r}")
+    
+    plt.xlabel('Time Step')
+    plt.ylabel('Financial Sequence')
+    plt.title('Financial Sequences from the Logistic Map')
+    plt.legend()
+    plt.show()
+
+if __name__ == "__main__":
+    r_values = [2.5, 3.2, 3.5, 3.8]
+    x0_sequence = [0.2, 0.5, 0.8]
+    num_steps = 100
+    plot_financial_sequences(r_values, x0_sequence, num_steps)
+
+# Financial data generation with shipping costs
+def logistic_map_with_shipping(r, x0, shipping_cost, num_steps):
+    x_values = [x0]
+    for _ in range(num_steps - 1):
+        x_n = x_values[-1]
+        x_next = r * x_n * (1 - x_n) + shipping_cost
+        x_values.append(x_next)
+    return x_values
+
+def generate_financial_data_with_shipping(r_values, x0_sequence, shipping_costs, num_steps):
+    financial_data = []
+    for x0 in x0_sequence:
+        for shipping_cost in shipping_costs:
+            x_values = logistic_map_with_shipping(r_values, x0, shipping_cost, num_steps)
+            financial_data.append(x_values)
+    return np.array(financial_data)
+
+def numerical_derivative(y_values, dt):
+    return np.gradient(y_values, dt)
+
+def main():
+    r_values = [2.5, 3.2, 3.5, 3.8]
+    x0_sequence = [0.2, 0.5,
