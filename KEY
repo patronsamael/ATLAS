@@ -1,0 +1,38 @@
+from flask import Flask, request, jsonify
+import requests  # For fetching external data (replace with your preferred library)
+
+# Define a dictionary to store cached data (replace with a database for persistence)
+cached_data = {}
+
+app = Flask(__name__)
+
+# Function to fetch data from an external source (replace with your specific source)
+def fetch_data(url):
+  response = requests.get(url)
+  if response.status_code == 200:
+    return response.json()
+  else:
+    print(f"Error fetching data from {url}: {response.status_code}")
+    return None
+
+# Webhook endpoint to receive requests and return data
+@app.route('/api/v1/financial_data', methods=['GET'])
+def get_financial_data():
+  # Define the data source URL (replace with your actual source)
+  data_url = "https://your-open-source-data-source.com/api/financial-data"
+
+  # Check if data is cached and not too old (replace with your caching strategy)
+  if "data" in cached_data and time.time() - cached_data["timestamp"] < 3600:
+    return jsonify(cached_data["data"])
+  else:
+    # Fetch data from external source if not cached or outdated
+    data = fetch_data(data_url)
+    if data:
+      cached_data["data"] = data
+      cached_data["timestamp"] = time.time()
+      return jsonify(data)
+    else:
+      return jsonify({"error": "Failed to fetch data"}), 500
+
+if __name__ == '__main__':
+  app.run(host='0.0.0.0', port=5000)  # Replace with your desired host and port
