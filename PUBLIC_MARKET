@@ -1,199 +1,59 @@
-import numpy as np
-import matplotlib.pyplot as plt
-from scipy import integrate
-from chatterbot import ChatBot
-from chatterbot.trainers import ChatterBotCorpusTrainer
-import random
-import pandas as pd
-import seaborn as sns
-import scipy.stats as st
-from statsmodels.formula.api import ols
-
 class PublicMarket:
-    def __init__(self):
-        self.trade_and_investment_registry = {}
-        self.broker_bot = ChatBot('BrokerBot')
-        trainer = ChatterBotCorpusTrainer(self.broker_bot)
-        trainer.train('chatterbot.corpus.english')
-        self.portfolio_manager = PortfolioManager(initial_cash=10000)
+  def __init__(self):
+    self.broker_bot = ChatBot('BrokerBot')
+    # Train the broker bot (replace with your training method)
+    self.broker_bot.train('some_training_data')
+    self.portfolio_manager = PortfolioManager(initial_cash=10000)
 
-    def lobby_for_stimulus_change(self):
-        user_name = input("Please enter your name: ")
-        lobbying_purpose = input("State the purpose of your lobbying for the stimulus change: ")
-        specific_demands = input("Please provide specific demands you want to advocate for: ")
+  def start_broker_bot(self):
+    print("BrokerBot: Hello! I'm your BrokerBot. How can I assist you today?")
+    while True:
+      user_input = input("You: ")
+      if user_input.lower() == 'exit':
+        print("BrokerBot: Goodbye!")
+        break
+      # Delegate tasks to portfolio manager
+      elif 'move assets' in user_input.lower():
+        response = self.portfolio_manager.move_assets_to_market_volume()
+      elif 'balance sheet' in user_input.lower():
+        response = self.portfolio_manager.get_balance_sheet()
+      elif 'income statement' in user_input.lower():
+        response = self.portfolio_manager.get_income_statement()
+      elif 'cash flow statement' in user_input.lower():
+        response = self.portfolio_manager.get_cash_flow_statement()
+      else:
+        response = self.broker_bot.get_response(user_input)
+      print("BrokerBot:", response)
 
-        lobbying_message = f"Dear Company/Government,\n\nMy name is {user_name}, and I am writing to lobby for a stimulus change with the following purpose:\n\n{lobbying_purpose}\n\nI am advocating for the following specific demands:\n\n{specific_demands}\n\nI believe these changes are essential for the well-being of our society and the economy.\n\nSincerely,\n{user_name}"
+  def get_live_transactions_data(self):
+    # Implement your logic to fetch real-time data from an API or other source
+    live_data = pd.read_csv('your_live_data_source.csv')
+    return live_data
 
-        print("\n--- Lobbying Message ---")
-        print(lobbying_message)
-        print("--- End of Lobbying Message ---")
-
-    def lobby_for_political_ownership_change(self):
-        user_name = input("Please enter your name: ")
-        lobbying_purpose = input("State the purpose of your lobbying for political ownership change: ")
-        specific_demands = input("Please provide specific demands you want to advocate for: ")
-
-        lobbying_message = f"Dear Political Entity,\n\nMy name is {user_name}, and I am writing to lobby for a change in political ownership in the market with the following purpose:\n\n{lobbying_purpose}\n\nI am advocating for the following specific demands:\n\n{specific_demands}\n\nI believe these changes are essential for promoting fairness and transparency in the market.\n\nSincerely,\n{user_name}"
-
-        print("\n--- Lobbying Message ---")
-        print(lobbying_message)
-        print("--- End of Lobbying Message ---")
-
-    def generate_financial_data_with_shipping(self, r_values, x0_sequence, shipping_costs, num_steps):
-        financial_data = []
-        for x0 in x0_sequence:
-            for shipping_cost in shipping_costs:
-                x_values = self.logistic_map_with_shipping(r_values, x0, shipping_cost, num_steps)
-                financial_data.append(x_values)
-        return np.array(financial_data)
-
-    def logistic_map_with_shipping(self, r, x0, shipping_cost, num_steps):
-        x_values = [x0]
-        for _ in range(num_steps - 1):
-            x_n = x_values[-1]
-            x_next = r * x_n * (1 - x_n) + shipping_cost
-            x_values.append(x_next)
-        return x_values
-
-    def calculate_financial_metrics(self, financial_data):
-        average_values = np.mean(financial_data, axis=1)
-        std_deviation_values = np.std(financial_data, axis=1)
-        integral_results = []
-        for i in range(financial_data.shape[0]):
-            result, _ = integrate.quad(lambda x: (x * financial_data[i][0]) ** (-1), financial_data[i][0], np.inf)
-            integral_results.append(result)
-        derivatives = [self.numerical_derivative(financial_data[i], 1) for i in range(financial_data.shape[0])]
-        return average_values, std_deviation_values, integral_results, derivatives
-
-    def numerical_derivative(self, y_values, dt):
-        return np.gradient(y_values, dt)
-
-    def compound_investment_with_logistic_map(self, i, x, r, n, t, num_steps, time_step):
-        x0 = x / i
-        time_values, logistic_values = self.logistic_map_with_time(r, x0, num_steps, time_step)
-        logistic_factor = logistic_values[-1]
-        compound_factor = (1 + logistic_factor + (r / n)) ** (n / t)
-        ciic = i * compound_factor
-        time_sequence = [time_value * t for time_value in time_values]
-        return time_sequence, logistic_values
-
-    def logistic_map_with_time(self, r, x0, num_steps, time_step):
-        x_values = [x0]
-        for _ in range(num_steps - 1):
-            x_n = x_values[-1]
-            x_next = r * x_n * (1 - x_n)
-            x_values.append(x_next)
-        time_values = [time_step * step for step in range(num_steps)]
-        return time_values, x_values
-
-    def liquidity_provision(self, financial_volume_density, net_cash_flow, time, iterations):
-        def integrand(x, r, t):
-            return (r * x) / t
-
-        def average_calculation(iterations, financial_volume_density, net_cash_flow, time):
-            result_sum = 0
-            for i in range(1, iterations + 1):
-                result_sum += financial_volume_density * net_cash_flow / time * i / iterations
-            return result_sum / iterations
-
-        r, _ = integrate.quad(integrand, 0, 1, args=(average_calculation(iterations, financial_volume_density, net_cash_flow, time), time))
-        return r
-
-    def start_broker_bot(self):
-        print("BrokerBot: Hello! I'm your BrokerBot. How can I assist you today?")
-        while True:
-            user_input = input("You: ")
-            if user_input.lower() == 'exit':
-                print("BrokerBot: Goodbye!")
-                break
-            elif 'move assets' in user_input.lower():
-                response = self.portfolio_manager.move_assets_to_market_volume()
-            elif 'balance sheet' in user_input.lower():
-                response = self.portfolio_manager.get_balance_sheet()
-            elif 'income statement' in user_input.lower():
-                response = self.portfolio_manager.get_income_statement()
-            elif 'cash flow statement' in user_input.lower():
-                response = self.portfolio_manager.get_cash_flow_statement()
-            else:
-                response = self.broker_bot.get_response(user_input)
-            print("BrokerBot:", response)
-
-    def get_live_transactions_data(self):
-        # Implement your logic to fetch real-time data from an API or other source
-        live_data = pd.read_csv('your_live_data_source.csv')
-        return live_data
-
-    def analyze_live_data(self, live_fdi_data):
-        print(live_fdi_data.head())
-        live_summary_stats = live_fdi_data.describe()
-        print(live_summary_stats)
-
-        sns.pairplot(live_fdi_data)
-        plt.show()
-
-        live_correlation_matrix = live_fdi_data.corr()
-        sns.heatmap(live_correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f")
-        plt.title('Correlation Matrix - Live Data')
-        plt.show()
-
-        live_model = ols('dependent_col ~ independent_col', data=live_fdi_data).fit()
-        print(live_model.summary())
-
-        live_t_stat, live_p_value = st.ttest_ind(live_fdi_data['col1'], live_fdi_data['col2'])
-        print(f'T-Statistic: {live_t_stat}, P-Value: {live_p_value}')
-
-    def calculate_volatility_adjusted_matrix(self, live_fdi_data):
-        live_percentage_changes = live_fdi_data.pct_change() * 100
-        live_volatility = live_percentage_changes.rolling(window=20).std()
-        live_volatility_adjusted_matrix = pd.DataFrame(index=live_fdi_data.index, columns=live_fdi_data.columns)
-        for col1 in live_fdi_data.columns:
-            for col2 in live_fdi_data.columns:
-                if col1 != col2:
-                    weight = 1 / (live_volatility[col1] - live_volatility[col2] + 1e-10)
-                    live_volatility_adjusted_matrix[f'{col1}_{col2}_VolAdj'] = weight * (live_fdi_data[col1] - live_fdi_data[col2])
-        return live_volatility_adjusted_matrix
-
-    def calculate_investment_yield_matrix(self, live_fdi_data, live_treasuries_data, live_volatility_adjusted_matrix):
-        live_percentage_changes_fdi = live_fdi_data.pct_change() * 100
-        live_percentage_changes_treasuries = live_treasuries_data.pct_change() * 100
-        liquidity_rates_fdi = live_percentage_changes_fdi.rolling(window=10).mean()
-        liquidity_rates_treasuries = live_percentage_changes_treasuries.rolling(window=10).mean()
-
-        liquidity_adjusted_matrix = pd.DataFrame(index=live_fdi_data.index)
-        for col1 in live_fdi_data.columns:
-            for col2 in live_treasuries_data.columns:
-                if col1 in col2:
-                    weight = liquidity_rates_fdi[col1] / (liquidity_rates_treasuries[col2] + 1e-10)
-                    liquidity_adjusted_matrix[f'{col1}_{col2}_LiqAdj'] = weight * (live_fdi_data[col1] - live_treasuries_data[col2])
-
-        investment_yield_matrix = pd.DataFrame(index=live_volatility_adjusted_matrix.index)
-        for col in live_volatility_adjusted_matrix.columns:
-            col1, col2 = col.split('_')[:2]
-            if f'{col1}_{col2}_LiqAdj' in liquidity_adjusted_matrix.columns:
-                investment_yield_matrix[col] = (live_volatility_adjusted_matrix[col] + liquidity_adjusted_matrix[f'{col1}_{col2}_LiqAdj']) / 2
-        return investment_yield_matrix
+  def analyze_live_data(self, live_data):
+    print(live_data.head())
+    print(live_data.describe())
+    # Further data analysis using libraries like seaborn (not included for simplicity)
+    # ...
 
 class PortfolioManager:
-    def __init__(self, initial_cash):
-        self.initial_cash = initial_cash
-        self.portfolio = {'cash': initial_cash, 'assets': {}, 'market_value': {}}
+  def __init__(self, initial_cash):
+    self.cash = initial_cash
+    self.assets = {}  # Dictionary to store asset types and quantities
+    self.market_value = {}  # Dictionary to store market value of each asset
 
-    def move_assets_to_market_volume(self):
-        total_market_volume = sum(self.portfolio['market_value'].values())
-        for asset, amount in self.portfolio['assets'].items():
-            self.portfolio['market_value'][asset] = amount / total_market_volume
-        return self.portfolio['market_value']
+  def move_assets_to_market_volume(self):
+    total_market_value = sum(self.market_value.values())
+    for asset, amount in self.assets.items():
+      self.market_value[asset] = amount / total_market_value
+    return self.market_value
 
-    def get_balance_sheet(self):
-        assets = sum(self.portfolio['assets'].values())
-        balance_sheet = {'assets': assets, 'cash': self.portfolio['cash']}
-        return balance_sheet
+  def get_balance_sheet(self):
+    total_assets = sum(self.assets.values())
+    return {'assets': total_assets, 'cash': self.cash}
 
-    def get_income_statement(self):
-        income_statement = {'total_assets': sum(self.portfolio['assets'].values()), 'cash': self.portfolio['cash']}
-        return income_statement
+  def get_income_statement(self):
+    return {'total_assets': sum(self.assets.values()), 'cash': self.cash}
 
-    def get_cash_flow_statement(self):
-        cash_flow_statement = {'cash': self.portfolio['cash']}
-        return cash_flow_statement
-
+  def get_cash_flow_statement(self):
+    return {'cash': self.cash}
