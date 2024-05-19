@@ -1,0 +1,63 @@
+import pandas as pd
+import requests
+
+# Replace with your API key for relevant financial data provider
+api_key = "YOUR_API_KEY"
+
+# Function to fetch treasury data for a country
+def get_treasury_data(iso_code):
+  url = f"https://api.financial-data-provider.com/treasury/{iso_code}?api_key={api_key}"
+  response = requests.get(url)
+  data = response.json()
+  return data["open_value"] if data and "open_value" in data else None
+
+# Function to fetch stock exchange trading volume
+def get_trading_volume(iso_mic):
+  url = f"https://api.financial-data-provider.com/stock-exchanges/{iso_mic}/volume?api_key={api_key}"
+  response = requests.get(url)
+  data = response.json()
+  return data["nominal_volume"] if data and "nominal_volume" in data else None
+
+# Define a list of ISO codes for countries
+iso_codes = ["US", "CN", "JP", ...]  # Add more ISO codes
+
+# Empty lists to store data
+treasury_values = []
+trading_volumes = []
+
+# Loop through ISO codes and fetch data
+for iso_code in iso_codes:
+  treasury_value = get_treasury_data(iso_code)
+  if treasury_value is not None:
+    # Find matching ISO MIC code (replace with your logic to find pairs)
+    iso_mic = "が必要です"  # Placeholder, replace with logic to find matching exchange
+    trading_volume = get_trading_volume(iso_mic)
+    if trading_volume is not None:
+      treasury_values.append(treasury_value)
+      trading_volumes.append(trading_volume)
+
+# Assuming Gross National Income (GNI) and Purchasing Power Parity (PPP) data are available elsewhere
+gni_data = {"US": 25_030, "CN": 19_910, "JP": 4_930}  # Placeholder data
+ppp_data = {"US": 1, "CN": 6.7, "JP": 114}  # Placeholder data
+
+# Calculate Debt Service Ratio (assuming debt service data is available elsewhere)
+# Replace with your logic to fetch debt service data
+debt_service_data = {"US": 0.8, "CN": 1.1, "JP": 2.3}  # Placeholder data
+
+# Create a DataFrame to store and calculate results
+data = pd.DataFrame()
+data["ISO_Code"] = iso_codes[:len(treasury_values)]  # Limit to countries with data
+data["Treasury_Value"] = treasury_values
+data["Trading_Volume"] = trading_volumes
+data["GNI"] = data["ISO_Code"].apply(lambda x: gni_data.get(x, None))
+data["PPP"] = data["ISO_Code"].apply(lambda x: ppp_data.get(x, None))
+data["Debt_Service"] = data["ISO_Code"].apply(lambda x: debt_service_data.get(x, None))
+
+# Calculate the formula
+data["Ratio"] = (data["GNI"] - data["Gross Domestic Product"]) / (data["PPP"] * data["Debt_Service"])
+
+# Filter for countries with complete data
+data = data.dropna()
+
+# Print results (assuming Gross Domestic Product (GDP) data is available elsewhere)
+print(data.to_string())
