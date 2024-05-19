@@ -1,0 +1,55 @@
+class Treasury(GlobalInvestorWithCurrency):
+    def __init__(self, name):
+        super().__init__(name)
+        self.government_investments = {}
+        self.cash_balance = 0  # Track cash balance for the treasury
+
+    def invest_in_government(self, government_name, amount, ownership_percentage):
+        """
+        Invests in a government by swapping debt with currency.
+
+        Args:
+            government_name (str): Name of the government to invest in.
+            amount (float): Amount of currency to invest.
+            ownership_percentage (float): Percentage ownership of the government's GDP.
+        """
+        if self.cash_balance >= amount:
+            super().invest_in_government(government_name, amount, ownership_percentage)
+            self.cash_balance -= amount
+        else:
+            print(f"Insufficient cash balance to invest in {government_name}.")
+
+    def sell_government_bond(self, government_name, amount):
+        """
+        Sells government bonds to increase cash balance.
+
+        Args:
+            government_name (str): Name of the government to sell bonds from.
+            amount (float): Amount of bonds to sell.
+        """
+        if government_name in self.government_investments:
+            investment = self.government_investments[government_name]
+            if investment['amount'] >= amount:
+                # Update government investment and cash balance
+                self.cash_balance += amount * self.get_last_price('bonds', government_name)
+                investment['amount'] -= amount
+                if investment['amount'] == 0:
+                    del self.government_investments[government_name]
+                print(f"Sold {amount} {government_name} bonds and increased cash balance.")
+            else:
+                print(f"Insufficient {government_name} bond holdings to sell {amount}.")
+        else:
+            print(f"No {government_name} bond holdings found.")
+
+    def display_cash_balance(self):
+        """
+        Displays the current cash balance of the treasury.
+        """
+        print(f"Current Cash Balance: {self.cash_balance}")
+
+    def display_government_investments(self):
+        """
+        Displays the investments in governments and cash balance.
+        """
+        super().display_government_investments()
+        self.display_cash_balance()
