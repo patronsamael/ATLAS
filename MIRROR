@@ -1,1 +1,104 @@
+import pandas as pd
+import numpy as np
+import yfinance as yf
+
+class TradeFinance:
+  def __init__(self, account_number, account_holder, currency):
+    self.account_number = account_number
+    self.account_holder = account_holder
+    self.currency = currency
+    self.balance = 0
+
+  def deposit(self, amount):
+    self.balance += amount
+
+  def withdraw(self, amount):
+    if self.balance >= amount:
+      self.balance -= amount
+      return True
+    else:
+      print("Insufficient funds")
+      return False
+
+  def transfer_funds(self, target_account, amount):
+    if self.withdraw(amount):
+      target_account.deposit(amount)
+      print(f"Transferred {amount} {self.currency} to Account {target_account.account_number}")
+
+  def invest_funds(self, investment_amount, ticker):
+    # Placeholder for actual investment logic using yfinance
+    print(f"Investing {investment_amount} {self.currency} in {ticker} stock market")
+
+  def get_balance(self):
+    return self.balance
+
+  def fetch_stock_data(self, ticker, period="1d"):
+    """
+    Fetches stock data for the given ticker and period efficiently.
+    """
+    return yf.download(ticker, period=period)["Close"].iloc[-1]
+
+  def calculate_insurance_cost(self, container_value, ship_value, goods_value):
+    self.total_value = container_value + ship_value + goods_value
+    return self.total_value
+
+  def get_real_time_allocation(self, shipping_indexes):
+    if len(shipping_indexes) > 0:
+      allocation = np.random.rand(len(shipping_indexes))
+      return allocation
+    else:
+      return np.array([])
+
+  def calculate_market_value(self, volatility_factor=1.0):
+    # Leverage previously fetched stock data and total value for efficiency
+    stock_data = self.fetch_stock_data(symbols)  # Assuming symbols list is defined elsewhere
+    total_stock_value = sum(stock_data.values())
+    market_value = total_stock_value * volatility_factor
+    return market_value
+
+# Example usage
+account_number = "123456789"
+account_holder = "John Doe"
+currency = "USD"
+
+trade_finance = TradeFinance(account_number, account_holder, currency)
+
+# Deposit funds
+trade_finance.deposit(1000.0)
+
+# Invest funds (replace with actual logic)
+investment_amount = 500.0
+ticker = "AAPL"
+trade_finance.invest_funds(investment_amount, ticker)
+
+# Check balance efficiently
+balance = trade_finance.get_balance()
+print(f"Account Balance: {balance} {currency}")
+
+# Simulate real-time updates (placeholder for efficiency)
+container_value = 50000
+ship_value = 1000000
+goods_value = 200000
+shipping_indexes = np.array([150, 155, 160, 158])
+
+# Calculate insurance cost efficiently (reuse total value)
+insurance_cost = trade_finance.calculate_insurance_cost(container_value, ship_value, goods_value)
+print(f"Total Insurance Cost: {insurance_cost} {currency}")
+
+# Calculate market value efficiently (reuse fetched data and total value)
+market_value = trade_finance.calculate_market_value(volatility_factor=1.2)
+print(f"Overall Market Value: {market_value} {currency}")
+
+class PublicMarket:
+  def __init__(self):
+    self.broker_bot = ChatBot('BrokerBot')
+    # Train the broker bot (replace with your training method)
+    self.broker_bot.train('some_training_data')
+    self.portfolio_manager = PortfolioManager(initial_cash=10000)
+
+  def start_broker_bot(self):
+    print("BrokerBot: Hello! I'm your BrokerBot. How can I assist you today?")
+    while True:
+      user_input = input("You: ")
+      if user_input.lower() == '
 
