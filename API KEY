@@ -1,0 +1,24 @@
+import requests
+
+# Replace with your actual API endpoint URL and a placeholder for the key
+api_url = "https://api.your-crypto-provider.com/data"
+api_key = "YOUR_SECURE_API_KEY"  # Replace with a secure way to store the key
+
+def get_crypto_data(symbol):
+  """Fetches crypto market data for a symbol using a secure API key."""
+  headers = {"Authorization": f"Bearer {api_key}"}  # Assuming Bearer token authentication
+  params = {"symbol": symbol}
+  response = requests.get(api_url, headers=headers, params=params)
+
+  if response.status_code == 200:
+    return response.json()
+  else:
+    print(f"Error fetching data for {symbol}: {response.status_code}")
+    return None
+
+# Example usage (assuming the API supports Bitcoin data)
+data = get_crypto_data("BTC")
+if data:
+  print(data)
+else:
+  print("Failed to retrieve data.")
